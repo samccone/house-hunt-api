@@ -15,7 +15,7 @@ module.exports = (req, res) ->
   # GAS
   gasTrends = "NGRCD.#{STATE}.A"
 
-  # WOOD PRICE IN ARK
+  # WOOD
   woodTrends = "WDRCD.#{STATE}.A"
 
 
