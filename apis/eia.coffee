@@ -1,25 +1,25 @@
 w         = require 'when'
 fn        = require('when/node/function').call
 get       = require('request').get
-root      = "http://api.eia.gov/series?api_key=#{process.env['EIA_KEY']}&series_id=SEDS."
+root      = "http://api.eia.gov/series?api_key=#{process.env['EIA_KEY']}&series_id="
 cache     = require 'memory-cache'
 responder = require '../responder'
 
 module.exports = (req, res) ->
-  STATE     = req.params.state
+  STATE     = req.params.state.toUpperCase()
   cacheKey  = "trends-#{STATE}"
 
   # OIL
-  oilTrends = "DFRCD.#{STATE}.A"
+  oilTrends = "SEDS.DFRCD.#{STATE}.A"
 
   # ELEC
-  elecTrends = "ESRCD.#{STATE}.A"
+  elecTrends = "ELEC.PRICE.#{STATE}-RES.A"
 
   # GAS
-  gasTrends = "NGRCD.#{STATE}.A"
+  gasTrends = "NG.N3010#{STATE}3.A"
 
   # WOOD
-  woodTrends = "WDRCD.#{STATE}.A"
+  woodTrends = "SEDS.WDRCD.#{STATE}.A"
 
 
   if cached = cache.get cacheKey
@@ -30,4 +30,7 @@ module.exports = (req, res) ->
     fn(get, root+gasTrends),
     fn(get, root+elecTrends),
     fn(get, root+oilTrends)]).then (d) ->
-      responder(req, res, cache.put(cacheKey, d.map (v) -> JSON.parse(v[0].body)))
+      d = d.map (v) -> JSON.parse(v[0].body)
+
+      cache.put(cacheKey, d)
+      responder(req, res, d)
