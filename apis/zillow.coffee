@@ -1,6 +1,7 @@
-request = require 'request'
-cache   = require 'memory-cache'
-xml2js  = require('xml2js').parseString
+request   = require 'request'
+cache     = require 'memory-cache'
+xml2js    = require('xml2js').parseString
+responder = require '../responder'
 
 getDemographics = (zip, cb) ->
   baseURL = "http://www.zillow.com/webservice/GetDemographics.htm?zws-id=#{process.env['ZILLOW_ID']}"
@@ -12,18 +13,18 @@ demographics = (req, res) ->
   cacheKey = req.params.zip
 
   if cached = cache.get(cacheKey)
-    res.json(cached)
+    responder(req, res, cached)
     return
 
   getDemographics req.params.zip, (e, d) ->
     cache.put(cacheKey, d)
-    res.json d
+    responder(req, res, d)
 
 search = (req, res) ->
   cacheKey = "#{req.params.zip}-demo"
 
   if cached = cache.get(cacheKey)
-    res.json cached
+    responder(req, res, cached)
     return
 
   getDemographics req.params.zip, (e, d) ->
@@ -39,7 +40,7 @@ search = (req, res) ->
           p
 
         cache.put(cacheKey, r)
-        res.json r
+        responder(req, res, r)
 
 module.exports =
   demographics : demographics
