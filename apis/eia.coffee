@@ -13,7 +13,7 @@ module.exports = (req, res) ->
   oilTrends = "SEDS.DFRCD.#{STATE}.A"
 
   # ELEC
-  elecTrends = "ELEC.PRICE.#{STATE}-RES.A"
+  elecTrends = "SEDS.ESRCD.#{STATE}.A"
 
   # GAS
   gasTrends = "NG.N3010#{STATE}3.A"
