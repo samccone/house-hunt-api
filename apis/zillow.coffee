@@ -36,7 +36,7 @@ search = (req, res) ->
       request.get url, (e, d) ->
         r = JSON.parse(d.body)
         r.map.properties.map (p) ->
-          p[7][4] = p[7][4]?.replace(/p_a/,"p_d")
+          p[7][4] = p[7][4]?.replace?(/p_a/,"p_d")
           p
 
         cache.put(cacheKey, r)
