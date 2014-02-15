@@ -1,8 +1,9 @@
-w       = require 'when'
-fn      = require('when/node/function').call
-get     = require('request').get
-root    = "http://api.eia.gov/series?api_key=#{process.env['EIA_KEY']}&series_id=SEDS."
-cache   = require 'memory-cache'
+w         = require 'when'
+fn        = require('when/node/function').call
+get       = require('request').get
+root      = "http://api.eia.gov/series?api_key=#{process.env['EIA_KEY']}&series_id=SEDS."
+cache     = require 'memory-cache'
+responder = require '../responder'
 
 module.exports = (req, res) ->
   STATE     = req.params.state
@@ -29,4 +30,4 @@ module.exports = (req, res) ->
     fn(get, root+gasTrends),
     fn(get, root+elecTrends),
     fn(get, root+oilTrends)]).then (d) ->
-      res.json cache.put(cacheKey, d.map (v) -> JSON.parse(v[0].body))
+      responder(req, res, cache.put(cacheKey, d.map (v) -> JSON.parse(v[0].body)))
