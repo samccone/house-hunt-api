@@ -23,7 +23,7 @@ module.exports = (req, res) ->
 
 
   if cached = cache.get cacheKey
-    res.json cached
+    responder(req, res, cached)
     return
 
   w.all([fn(get, root+woodTrends),
