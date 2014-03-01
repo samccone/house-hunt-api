@@ -3,6 +3,7 @@
 
 ```coffeescript
   '/demographics/:zip'
+  '/details/:zpid'
   '/homes/:zip'
   '/trends/:state'
   POST => '/score'
