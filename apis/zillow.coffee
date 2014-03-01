@@ -21,6 +21,17 @@ demographics = (req, res) ->
     cache.put(cacheKey, d)
     responder(req, res, d)
 
+details = (req, res) ->
+  cacheKey = "#{req.params.zpid}"
+  if cached = cache.get(cacheKey)
+    responder(req, res, cached)
+    return
+
+  request.get "#{baseAPI}GetDeepComps.htm?zws-id=#{process.env['ZILLOW_ID']}&zpid=#{req.params.zpid}&count=1", (e, d) ->
+    xml2js d.body, (e, d) ->
+      cache.put(cacheKey, d)
+      responder(req, res, d)
+
 search = (req, res) ->
   cacheKey = "#{req.params.zip}-demo"
 
@@ -46,3 +57,4 @@ search = (req, res) ->
 module.exports =
   demographics : demographics
   search       : search
+  details      : details
