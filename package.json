@@ -5,14 +5,15 @@
     "request": "~2.33.0",
     "lodash": "~2.4.1",
     "xml2js": "~0.4.1",
-    "when": "~2.8.0"
+    "when": "~2.8.0",
+    "hes-score": "~0.1.0"
   },
   "name": "house-hunt-api",
   "subdomain": "house-hunt-api",
   "scripts": {
     "start": "coffee app.coffee"
   },
-  "version": "1.0.0-2",
+  "version": "1.0.0-6",
   "engines": {
     "node": "0.10.x"
   }

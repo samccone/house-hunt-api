@@ -3,19 +3,25 @@ express = require 'express'
 app     = express()
 port    = process.env['PORT'] || 3333
 
+app.use(express.json())
+app.use(express.urlencoded())
+
 app.all '*', (req, res, next) ->
   res.header "Access-Control-Allow-Origin", "*"
   res.header "Access-Control-Allow-Headers", "X-Requested-With"
   next()
 
-app.get '/demographics/:zip', require('./apis/zillow').demographics
-app.get '/homes/:zip', require('./apis/zillow').search
-app.get '/trends/:state', require('./apis/eia')
+app.get '/demographics/:zip',  require('./apis/zillow').demographics
+app.get '/homes/:zip',         require('./apis/zillow').search
+app.get '/trends/:state',      require('./apis/eia')
+app.post '/score',             require('./apis/hes')
+
 app.get '/', (req, res) ->
   res.send("
-    '/demographics/:zip' <br>
-    '/homes/:zip' <br>
-    '/trends/:state'
+    'get /demographics/:zip' <br>
+    'get /homes/:zip' <br>
+    'get /trends/:state' <br>
+    'post /score => {zip, inputs}'
   ")
 
 app.listen port
