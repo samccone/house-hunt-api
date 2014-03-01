@@ -2,14 +2,15 @@ request   = require 'request'
 cache     = require 'memory-cache'
 xml2js    = require('xml2js').parseString
 responder = require '../responder'
+baseAPI   = "http://www.zillow.com/webservice/"
 
 getDemographics = (zip, cb) ->
-  baseURL = "http://www.zillow.com/webservice/GetDemographics.htm?zws-id=#{process.env['ZILLOW_ID']}"
+  baseURL = "#{baseAPI}GetDemographics.htm?zws-id=#{process.env['ZILLOW_ID']}"
   request.get "#{baseURL}&zip=#{zip}", (e, d) ->
     xml2js d.body, cb
 
 demographics = (req, res) ->
-  baseURL = "http://www.zillow.com/webservice/GetDemographics.htm?zws-id=#{process.env['ZILLOW_ID']}"
+  baseURL = "#{baseAPI}GetDemographics.htm?zws-id=#{process.env['ZILLOW_ID']}"
   cacheKey = req.params.zip
 
   if cached = cache.get(cacheKey)
