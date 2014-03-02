@@ -21,16 +21,28 @@ demographics = (req, res) ->
     cache.put(cacheKey, d)
     responder(req, res, d)
 
-details = (req, res) ->
-  cacheKey = "#{req.params.zpid}"
+getAddressFromId = (id, cb) ->
+  cacheKey = "address-for-#{id}"
   if cached = cache.get(cacheKey)
-    responder(req, res, cached)
+    cb(null, cached)
     return
 
-  request.get "#{baseAPI}GetDeepComps.htm?zws-id=#{process.env['ZILLOW_ID']}&zpid=#{req.params.zpid}&count=1", (e, d) ->
+  request.get "#{baseAPI}GetZestimate.htm?zws-id=#{process.env['ZILLOW_ID']}&zpid=#{id}", (e, d) ->
     xml2js d.body, (e, d) ->
-      cache.put(cacheKey, d)
-      responder(req, res, d)
+      cache.put(cacheKey, d['Zestimate:zestimate']['response'][0]['address'][0])
+      cb(null, d['Zestimate:zestimate']['response'][0]['address'][0])
+
+details = (req, res) ->
+  getAddressFromId req.params.zpid, (e, address) ->
+    cacheKey = "#{req.params.zpid}"
+    if cached = cache.get(cacheKey)
+      responder(req, res, cached)
+      return
+
+    request.get "#{baseAPI}GetDeepSearchResults.htm?zws-id=#{process.env['ZILLOW_ID']}&address=#{encodeURIComponent(address.street[0])}&citystatezip=#{address.zipcode[0]}", (e, d) ->
+      xml2js d.body, (e, d) ->
+        cache.put(cacheKey, d)
+        responder(req, res, d)
 
 search = (req, res) ->
   cacheKey = "#{req.params.zip}-demo"
