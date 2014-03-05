@@ -37,21 +37,16 @@ getAddressFromId = (id, cb) ->
         cb(null, d['Zestimate:zestimate']['response'][0]['address'][0])
 
 details = (req, res) ->
-  getAddressFromId req.params.zpid, (e, address) ->
-    if (e or Object.keys(address).length is 0)
-      console.log(e)
-      responder(req, res, {})
-      return
+  cacheKey = "#{req.params.zpid}"
+  if cached = cache.get(cacheKey)
+    responder(req, res, cached)
+    return
 
-    cacheKey = "#{req.params.zpid}"
-    if cached = cache.get(cacheKey)
-      responder(req, res, cached)
-      return
-
-    request.get "#{baseAPI}GetDeepSearchResults.htm?zws-id=#{process.env['ZILLOW_ID']}&address=#{encodeURIComponent(address.street[0])}&citystatezip=#{address.zipcode[0]}", (e, d) ->
-      xml2js d.body, (e, d) ->
-        cache.put(cacheKey, d)
-        responder(req, res, d)
+  request.get "http://www.zillow.com/jsonp/Hdp.htm?zpid=#{req.params.zpid}&fad=true&hc=false&callback=s", (e, d) ->
+    start = d.body.indexOf(', "title"')+13
+    end   = d.body.indexOf(', "subtitle"') - 1
+    cache.put(cacheKey, {address: d.body.slice(start, end)})
+    responder(req, res, cache.get(cacheKey))
 
 search = (req, res) ->
   cacheKey = "#{req.params.zip}-demo"
