@@ -12,11 +12,12 @@ app.all '*', (req, res, next) ->
   res.header "Access-Control-Allow-Headers", "X-Requested-With"
   next()
 
-app.get '/demographics/:zip',  Zillow.demographics
-app.get '/homes/:zip',         Zillow.search
-app.get '/details/:zpid',      Zillow.details
-app.get '/trends/:state',      require('./apis/eia')
-app.post '/score',             require('./apis/hes')
+app.get '/demographics/:zip',               Zillow.demographics
+app.get '/homes/:zip',                      Zillow.search
+app.get '/details/:zpid',                   Zillow.details
+app.get '/trends/:state',                   require('./apis/eia')
+app.get '/walk_score/:address/:lat/:lon',   require('./apis/walk_score')
+app.post '/score',                          require('./apis/hes')
 
 app.get '/', (req, res) ->
   res.send("
@@ -24,6 +25,7 @@ app.get '/', (req, res) ->
     'get /homes/:zip' <br>
     'get /trends/:state' <br>
     '/details/:zpid' <br>
+    '/walk_score/:address/:lat/:lon' <br>
     'post /score => {zip, inputs}'
   ")
 

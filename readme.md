@@ -6,6 +6,7 @@
   '/details/:zpid'
   '/homes/:zip'
   '/trends/:state'
+  '/walk_score/:address/:lat/:lon'
   POST => '/score'
 ```
 
@@ -24,5 +25,6 @@ $.post("http://localhost:3333/score", {zip: '02906', details: [{
   * ZILLOW_ID
   * EIA_KEY
   * HES_ID
+  * WALK_SCORE_KEY
 * npm install
 * supervisor -x coffee app.coffee
