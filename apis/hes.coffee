@@ -1,6 +1,16 @@
+cache     = require 'memory-cache'
+HESScore  = require 'hes-score'
 module.exports = (req, res) ->
-  require('hes-score')(
+  cacheKey = "#{req.body.zip}-#{JSON.stringify(req.body.details)}"
+
+  if (cache.get(cacheKey))
+    res.json(cache.get(cacheKey))
+    return
+
+  HESScore(
     req.body.zip,
     req.body.details,
-    (d) -> res.json(d)
+    (d) ->
+      cache.put cacheKey, d
+      res.json(d)
   )
