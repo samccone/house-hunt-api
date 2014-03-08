@@ -32,5 +32,5 @@ module.exports = (req, res) ->
     fn(get, root+oilTrends)]).then (d) ->
       d = d.map (v) -> JSON.parse(v[0].body)
 
-      cache.put(cacheKey, d)
+      cache.put(cacheKey, d, 1000 * 60 * 60 * 2)
       responder(req, res, d)

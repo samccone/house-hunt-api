@@ -18,7 +18,7 @@ demographics = (req, res) ->
     return
 
   getDemographics req.params.zip, (e, d) ->
-    cache.put(cacheKey, d)
+    cache.put(cacheKey, d, 1000 * 60 * 60 * 2)
     responder(req, res, d)
 
 getAddressFromId = (id, cb) ->
@@ -30,10 +30,10 @@ getAddressFromId = (id, cb) ->
   request.get "#{baseAPI}GetZestimate.htm?zws-id=#{process.env['ZILLOW_ID']}&zpid=#{id}", (e, d) ->
     xml2js d.body, (e, d) ->
       if d['Zestimate:zestimate'].message[0].code[0] isnt "0"
-        cache.put(cacheKey, {})
+        cache.put(cacheKey, {}, 1000 * 60 * 60 * 2)
         cb("not found #{id}")
       else
-        cache.put(cacheKey, d['Zestimate:zestimate']['response'][0]['address'][0])
+        cache.put(cacheKey, d['Zestimate:zestimate']['response'][0]['address'][0], 1000 * 60 * 60 * 2)
         cb(null, d['Zestimate:zestimate']['response'][0]['address'][0])
 
 details = (req, res) ->
@@ -45,7 +45,7 @@ details = (req, res) ->
   request.get "http://www.zillow.com/jsonp/Hdp.htm?zpid=#{req.params.zpid}&fad=true&hc=false&callback=s", (e, d) ->
     start = d.body.indexOf(', "title"')+13
     end   = d.body.indexOf(', "subtitle"') - 1
-    cache.put(cacheKey, {address: d.body.slice(start, end)})
+    cache.put(cacheKey, {address: d.body.slice(start, end)}, 1000 * 60 * 60 * 2)
     responder(req, res, cache.get(cacheKey))
 
 search = (req, res) ->
@@ -67,7 +67,7 @@ search = (req, res) ->
           p[7][4] = p[7][4]?.replace?(/p_a/,"p_d")
           p
 
-        cache.put(cacheKey, r)
+        cache.put(cacheKey, r, 1000 * 60 * 60 * 2)
         responder(req, res, r)
 
 module.exports =
