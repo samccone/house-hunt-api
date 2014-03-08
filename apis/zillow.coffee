@@ -60,7 +60,7 @@ search = (req, res) ->
     url = "http://www.zillow.com/search/GetRegionSelection.htm?regionId=#{regionId}"
     request.get url, (e, d) ->
       rect = JSON.parse(d.body).boundingRect
-      url = "http://www.zillow.com/search/GetResults.htm?status=110001&lt=11110&ht=11111&pr=,&mp=,&bd=0%2C&ba=0%2C&sf=,&lot=,&yr=,&pho=0&pets=0&parking=0&laundry=0&pnd=0&red=0&zso=0&days=any&ds=all&pmf=1&pf=1&zoom=13&rect=#{rect.sw.lon},#{rect.sw.lat},#{rect.ne.lon},#{rect.ne.lat}&p=1&sort=days&search=map&disp=1&rid=58981&rt=7&listright=true&responsivemode=defaultList&isMapSearch=false&zoom=13"
+      url = "http://www.zillow.com/search/GetResults.htm?status=110001&lt=11110&ht=11111&pr=,&mp=,&bd=0%2C&ba=0%2C&sf=,&lot=,&yr=,&pho=0&pets=0&parking=0&laundry=0&pnd=0&red=0&zso=0&days=any&ds=all&pmf=1&pf=1&zoom=13&rect=#{rect.sw.lon},#{rect.sw.lat},#{rect.ne.lon},#{rect.ne.lat}&p=1&sort=days&search=map&disp=1&rt=7&listright=true&responsivemode=defaultList&isMapSearch=false&zoom=13"
       request.get url, (e, d) ->
         r = JSON.parse(d.body)
         r.map.properties.map (p) ->
